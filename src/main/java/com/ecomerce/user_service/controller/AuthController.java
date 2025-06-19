@@ -13,10 +13,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("${api.version}/auth")
@@ -47,5 +51,11 @@ public class AuthController {
         return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(),
                 userDetails.getUsername(), userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority).toList()));
+    }
+
+    @PatchMapping("deactivate/{uuid}")
+    public ResponseEntity<?> deactivateUser(@PathVariable("uuid") UUID uuid){
+        authService.deactivateUser(uuid);
+        return ResponseEntity.ok("Deactivate user "+ uuid.toString() + " success");
     }
 }

@@ -1,15 +1,19 @@
 package com.ecomerce.user_service.service.auth;
 
-import com.ecomerce.user_service.dto.request.LoginRequest;
 import com.ecomerce.user_service.dto.request.RegisterRequest;
 import com.ecomerce.user_service.entity.User;
+import com.ecomerce.user_service.exception.DataNotFoundException;
+import com.ecomerce.user_service.kafka.event.GenericEventWrapper;
 import com.ecomerce.user_service.kafka.event.UserCreatedEvent;
 import com.ecomerce.user_service.kafka.producer.UserEventProducer;
 import com.ecomerce.user_service.mapper.UserMapper;
 import com.ecomerce.user_service.repository.UserRepository;
-import jakarta.validation.Valid;
+import com.ecomerce.user_service.util.EventUtil;
 import org.springframework.stereotype.Service;
-import java.time.ZonedDateTime;
+
+import java.util.UUID;
+
+import static com.ecomerce.user_service.entity.User.UserStatus.inactive;
 
 @Service
 public class AuthService implements IAuthService {
@@ -28,8 +32,18 @@ public class AuthService implements IAuthService {
     public void registerUser(RegisterRequest request) {
         User user = userMapper.toEntity(request);
         userRepository.save(user);
-        UserCreatedEvent event = new UserCreatedEvent(user.getId(), user.getEmail(), user.getFirstName()
-                , user.getLastName(), user.getUserName(),user.getRole().getName(), ZonedDateTime.now());
-        userEventProducer.sendUserCreatedEvent(event);
+        UserCreatedEvent event = userMapper.entityToUserCreatedEvent(user);
+        GenericEventWrapper<UserCreatedEvent> eventWrapper = EventUtil.createEvent("UserCreated",
+                event, "user-service", null);
+        userEventProducer.sendUserCreatedEvent(eventWrapper);
+    }
+
+    @Override
+    public void deactivateUser(UUID uuid) {
+        User user= userRepository.findByUuid(uuid).orElseThrow(
+                ()-> new DataNotFoundException("User not found!"));
+        user.setStatus(inactive);
+        userRepository.save(user);
+        System.out.println("handle deactivate user!");
     }
 }

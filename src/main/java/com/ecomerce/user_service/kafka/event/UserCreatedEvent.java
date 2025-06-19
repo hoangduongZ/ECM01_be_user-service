@@ -1,12 +1,12 @@
 package com.ecomerce.user_service.kafka.event;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public class UserCreatedEvent implements Serializable {
     private Long userId;
+    private UUID uuid;
     private String email;
     private String firstName;
     private String lastName;
@@ -14,14 +14,24 @@ public class UserCreatedEvent implements Serializable {
     private String role;
     private ZonedDateTime createdAt;
 
-    public UserCreatedEvent(Long userId, String email, String firstName, String lastName, String userName, String role, ZonedDateTime createdAt) {
+    public UserCreatedEvent(Long userId,UUID uuid, String email, String firstName, String lastName, String userName,
+                            String role, ZonedDateTime createdAt) {
         this.userId = userId;
+        this.uuid= uuid;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.userName = userName;
         this.role = role;
         this.createdAt = createdAt;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 
     public String getFirstName() {

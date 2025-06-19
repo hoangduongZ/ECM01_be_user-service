@@ -41,7 +41,6 @@ public class UserMapper {
                     .orElseThrow(() -> new DataNotFoundException("Role not found: " + request.getRole()));
         }
         user.setRole(role);
-
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         return user;
     }
@@ -49,6 +48,7 @@ public class UserMapper {
     public UserCreatedEvent entityToUserCreatedEvent(User user) {
         return new UserCreatedEvent(
                 user.getId(),
+                user.getUuid(),
                 user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),

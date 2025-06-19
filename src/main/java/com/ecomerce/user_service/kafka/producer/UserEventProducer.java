@@ -1,5 +1,6 @@
 package com.ecomerce.user_service.kafka.producer;
 
+import com.ecomerce.user_service.kafka.event.GenericEventWrapper;
 import com.ecomerce.user_service.kafka.event.UserCreatedEvent;
 import com.ecomerce.user_service.kafka.event.UserGetDetailEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,10 +23,10 @@ public class UserEventProducer {
         this.objectMapper = objectMapper;
     }
 
-    public void sendUserCreatedEvent(UserCreatedEvent event) {
+    public void sendUserCreatedEvent(GenericEventWrapper<?> event) {
         try {
             String payload = objectMapper.writeValueAsString(event);
-            kafkaTemplate.send(userCreatedTopic, event.getUserId().toString(), payload);
+            kafkaTemplate.send(userCreatedTopic, event.getEventId(), payload);
         } catch (Exception e) {
             throw new RuntimeException("Failed to serialize event", e);
         }

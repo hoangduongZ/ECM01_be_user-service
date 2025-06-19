@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
@@ -78,6 +79,13 @@ public class User extends BaseEntity {
         this.passwordHash = passwordHash;
         this.firstName = firstName;
         this.lastName = lastName;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+        }
     }
 
     // Getters and Setters
