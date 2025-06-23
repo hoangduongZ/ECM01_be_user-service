@@ -4,7 +4,7 @@ import com.ecomerce.user_service.dto.request.RegisterRequest;
 import com.ecomerce.user_service.entity.Role;
 import com.ecomerce.user_service.entity.User;
 import com.ecomerce.user_service.exception.DataNotFoundException;
-import com.ecomerce.user_service.kafka.event.UserCreatedEvent;
+import com.ecomerce.user_service.kafka.event.UserSummaryEvent;
 import com.ecomerce.user_service.repository.RoleRepository;
 import com.ecomerce.user_service.util.RoleDefineUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +21,19 @@ public class UserMapper {
     public UserMapper(RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public UserSummaryEvent entityToUserSummaryEvent(User user) {
+        return new UserSummaryEvent(
+                user.getId(),
+                user.getUuid(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getUserName(),
+                user.getRole().getName(),
+                ZonedDateTime.now()
+        );
     }
 
     public User toEntity(RegisterRequest request) {
@@ -43,18 +56,5 @@ public class UserMapper {
         user.setRole(role);
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         return user;
-    }
-
-    public UserCreatedEvent entityToUserCreatedEvent(User user) {
-        return new UserCreatedEvent(
-                user.getId(),
-                user.getUuid(),
-                user.getEmail(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getUserName(),
-                user.getRole().getName(),
-                ZonedDateTime.now()
-        );
     }
 }

@@ -28,7 +28,7 @@ public class User extends BaseEntity {
     @Column(name = "uuid", nullable = false, unique = true, updatable = false)
     private UUID uuid = UUID.randomUUID();
 
-    @Column(name = "user_name")
+    @Column(name = "user_name", unique = true)
     private String userName;
 
     @Column(name = "email", nullable = false, unique = true)

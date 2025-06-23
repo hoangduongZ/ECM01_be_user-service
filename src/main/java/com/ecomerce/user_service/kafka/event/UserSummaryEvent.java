@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-public class UserCreatedEvent implements Serializable {
+public class UserSummaryEvent implements Serializable {
     private Long userId;
     private UUID uuid;
     private String email;
@@ -14,10 +14,10 @@ public class UserCreatedEvent implements Serializable {
     private String role;
     private ZonedDateTime createdAt;
 
-    public UserCreatedEvent(Long userId,UUID uuid, String email, String firstName, String lastName, String userName,
+    public UserSummaryEvent(Long userId, UUID uuid, String email, String firstName, String lastName, String userName,
                             String role, ZonedDateTime createdAt) {
         this.userId = userId;
-        this.uuid= uuid;
+        this.uuid = uuid;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;

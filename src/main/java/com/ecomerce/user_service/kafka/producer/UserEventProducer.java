@@ -1,8 +1,6 @@
 package com.ecomerce.user_service.kafka.producer;
 
 import com.ecomerce.user_service.kafka.event.GenericEventWrapper;
-import com.ecomerce.user_service.kafka.event.UserCreatedEvent;
-import com.ecomerce.user_service.kafka.event.UserGetDetailEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -32,10 +30,10 @@ public class UserEventProducer {
         }
     }
 
-    public void sendUserGetDetail(UserGetDetailEvent event) {
+    public void sendUserGetDetail(GenericEventWrapper<?> event) {
         try {
             String payload = objectMapper.writeValueAsString(event);
-            kafkaTemplate.send(userGetDetailTopic, event.getUserName(), payload);
+            kafkaTemplate.send(userGetDetailTopic, event.getEventId(), payload);
         } catch (Exception e) {
             throw new RuntimeException("Failed to serialize event", e);
         }
